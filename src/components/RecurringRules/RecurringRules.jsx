@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Plus } from "lucide-react";
 import BASE_URL from "../../services/url.js";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import RecurringModal from "../Modals/RecurringModal"; // ✅ Modal import
 
 const RecurringRules = () => {
   const [recurringRules, setRecurringRules] = useState([]);
   const [operationLoading, setOperationLoading] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedRule, setSelectedRule] = useState(null);
   const token = localStorage.getItem("token");
 
   const setOperationLoadingState = (key, value) => {
@@ -17,16 +20,15 @@ const RecurringRules = () => {
   const fetchRecurringRules = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/recurring/`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      const rules = Array.isArray(res.data.recurring)
-        ? res.data.recurring
-        : Array.isArray(res.data)
-        ? res.data
-        : [];
+      const rules =
+        Array.isArray(res.data.recurring)
+          ? res.data.recurring
+          : Array.isArray(res.data)
+          ? res.data
+          : [];
 
       setRecurringRules(rules);
     } catch (err) {
@@ -43,12 +45,10 @@ const RecurringRules = () => {
       try {
         setOperationLoadingState("deleteRecurring", true);
         await axios.delete(`${BASE_URL}/api/recurring/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
         toast.success("Recurring rule deleted successfully!");
-        await fetchRecurringRules(); // ✅ trigger refresh after deletion
+        await fetchRecurringRules();
       } catch (error) {
         console.error("Error deleting recurring rule:", error);
         toast.error("Failed to delete recurring rule. Please try again.");
@@ -58,38 +58,58 @@ const RecurringRules = () => {
     }
   };
 
+  const openModalToCreate = () => {
+    setSelectedRule(null);
+    setModalOpen(true);
+  };
+
+  const openModalToEdit = (rule) => {
+    setSelectedRule(rule);
+    setModalOpen(true);
+  };
+
+  const handleModalSuccess = () => {
+    setModalOpen(false);
+    setSelectedRule(null);
+    fetchRecurringRules();
+  };
+
   return (
     <div className="max-w-4xl mx-auto pt-6">
       <div className="bg-white rounded-lg shadow-lg border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-900">Recurring Rules</h2>
+          <button
+            onClick={openModalToCreate}
+            className="flex items-center gap-1 text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 text-sm rounded"
+          >
+            <Plus size={14} />
+            Add Rule
+          </button>
         </div>
 
         <div className="p-6">
           <div className="space-y-4">
-            {Array.isArray(recurringRules) && recurringRules.length > 0 ? (
-              recurringRules.map((rule, index) => (
+            {recurringRules.length > 0 ? (
+              recurringRules.map((rule) => (
                 <div
-                  key={rule._id || index}
+                  key={rule._id}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
                 >
                   <div className="flex-1">
-                    <div className="flex items-center gap-4">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-800">
-                          {rule.description || rule.title || "Untitled Rule"}
-                        </h3>
-                      </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <h3 className="font-semibold text-gray-800">
+                        {rule.description || rule.title || "Untitled Rule"}
+                      </h3>
 
                       <div className="flex items-center gap-2">
                         <button
-                          disabled
-                          className="text-blue-500 p-1 opacity-60 cursor-not-allowed"
-                          title="Edit recurring rule (not implemented yet)"
+                          onClick={() => openModalToEdit(rule)}
+                          className="text-blue-500 hover:text-blue-700 p-1"
+                          title="Edit recurring rule"
                         >
                           <Edit size={16} />
                         </button>
-
                         <button
                           onClick={() => deleteRecurringRule(rule._id)}
                           className={`text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors ${
@@ -111,11 +131,7 @@ const RecurringRules = () => {
                           year: "numeric"
                         })}
                       </span>
-
-                      <span className="capitalize">
-                        {rule.frequency?.charAt(0).toUpperCase() + rule.frequency?.slice(1)}
-                      </span>
-
+                      <span className="capitalize">{rule.frequency}</span>
                       <span className="font-semibold text-green-600">
                         ₹{(rule.amount || 0).toLocaleString("en-IN")}
                       </span>
@@ -131,6 +147,14 @@ const RecurringRules = () => {
           </div>
         </div>
       </div>
+
+      {/* ✅ Modal Integration */}
+      <RecurringModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        initialData={selectedRule}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 };
