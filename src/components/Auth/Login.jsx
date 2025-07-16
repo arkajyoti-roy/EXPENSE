@@ -47,9 +47,8 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -59,21 +58,20 @@ const Login = () => {
         password: formData.password
       });
 
-      const { token } = response.data;
+      const { token, user } = response.data;
       localStorage.setItem("token", token);
-      console.log("Login successful, token stored:", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      // Navigate to /home instantly
-      navigate("/auth");
+      console.log("Login successful:", user.name);
+      navigate("/home");
     } catch (error) {
-      const errMsg = error.response?.data?.message || "Login failed. Please try again.";
-      setErrors({ general: errMsg });
-      console.error("Login error:", errMsg);
+      const msg = error.response?.data?.message || "Login failed. Please try again.";
+      setErrors({ general: msg });
+      console.error("Login error:", msg);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">

@@ -1,4 +1,5 @@
 import "./App.css";
+// import ExpenseProvider from "./context/ExpenseContext";
 import {
   BrowserRouter as Router,
   Routes,
@@ -36,28 +37,27 @@ function App() {
 
   return (
     <>
+      {/* <ExpenseProvider> */}
       <Router>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
           <Route
             path="/auth"
             element={<Navigate to={token ? "/home" : "/login"} replace />}
           />
-
           <Route
             path="/home"
             element={token ? <AllComp /> : <Navigate to="/login" replace />}
           />
-
-          <Route path="/login" element={<Login />} />
-        </Routes>
-        <Routes>
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<LandingPage />} />
         </Routes>
       </Router>
+
       <footer className="text-center text-gray-500 text-xs p-4 -mt-12">
         &copy; {new Date().getFullYear()} Expense Tracker. All rights reserved.
       </footer>
+    {/* </ExpenseProvider> */}
     </>
   );
 }
