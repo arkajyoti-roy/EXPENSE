@@ -17,12 +17,19 @@ const TransactionModal = ({ isOpen, onClose, initialData = null, onSuccess }) =>
     if (initialData) {
       setFormData({
         description: initialData.description || "",
-        amount: initialData.amount || "",
+        amount: initialData.amount?.toString() || "",
         type: initialData.type || "debit",
         date: initialData.date?.slice(0, 10) || new Date().toISOString().slice(0, 10)
       });
+    } else {
+      setFormData({
+        description: "",
+        amount: "",
+        type: "debit",
+        date: new Date().toISOString().slice(0, 10)
+      });
     }
-  }, [initialData]);
+  }, [initialData, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,33 +38,37 @@ const TransactionModal = ({ isOpen, onClose, initialData = null, onSuccess }) =>
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const payload = {
       ...formData,
       amount: Number(formData.amount),
-      date: new Date(formData.date)
+      date: new Date(formData.date),
+      month: formData.date.slice(0, 7) 
     };
 
-    try {
-      const method = initialData ? "put" : "post";
-      const url = initialData
-        ? `${BASE_URL}/api/transactions/${initialData._id}`
-        : `${BASE_URL}/api/transactions/`;
+    const method = initialData ? "put" : "post";
+    const endpoint = initialData
+      ? `${BASE_URL}/api/transactions/${initialData._id}`
+      : `${BASE_URL}/api/transactions/`;
 
-      await axios[method](url, payload, {
+    try {
+      await axios[method](endpoint, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
-setFormData({
+
+      toast.success(`Transaction ${initialData ? "updated" : "added"} successfully!`);
+
+      setFormData({
         description: "",
         amount: "",
         type: "debit",
         date: new Date().toISOString().slice(0, 10)
       });
-      
-      toast.success(`Transaction ${initialData ? "updated" : "added"} successfully!`);
+
       onSuccess?.();
       onClose();
     } catch (error) {
-      console.error("Error saving transaction:", error);
+      console.error("Error saving transaction:", error?.response?.data || error.message);
       toast.error("Failed to save transaction.");
     }
   };
