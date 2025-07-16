@@ -2,7 +2,7 @@ import Navbar from "./components/Navbar/Navbar.jsx";
 import OverviewCards from "./components/OverviewCards/OverviewCards.jsx";
 import ActionButton from "./components/ActionButtons/ActionButton.jsx";
 import RecentTranBudRecuu from "./components/RecentTranBudRecuu.jsx";
-import DashboardWrapper from "./components/Budgetoverview/DashboardWrapper.jsx";
+import DashboardWrapper from "./components/BudgetOverview/DashboardWrapper.jsx";
 function AllComp() {
   return (
     <>
