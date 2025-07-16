@@ -5,7 +5,6 @@ import BASE_URL from "../../services/url.js";
 const BudgetOverview = () => {
   const [budget, setBudget] = useState(null);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
   const [transactions, setTransactions] = useState([]);
   const [overviewData, setOverviewData] = useState({
     totalIncome: 0,
@@ -13,69 +12,69 @@ const BudgetOverview = () => {
     balance: 0
   });
 
-
+  const token = localStorage.getItem("token");
   const currentMonthKey = new Date().toISOString().slice(0, 7); // "YYYY-MM"
   const readableMonth = new Date().toLocaleString("default", {
     month: "long",
     year: "numeric"
   });
 
+  const format = num => `₹${(num || 0).toLocaleString("en-IN")}`;
+
+  const fetchBudget = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/budget?month=${currentMonthKey}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setBudget({ ...response.data, month: readableMonth });
+    } catch (err) {
+      console.error("❌ Budget fetch error:", err.message);
+      setBudget(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTransactionSummary = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/transactions/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const {
+        transactions = [],
+        netBalance = 0
+      } = res.data;
+
+      setTransactions(transactions);
+      setOverviewData({ balance: netBalance });
+    } catch (err) {
+      console.error("Failed to fetch transaction summary:", err.response?.data?.message || err.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchBudget = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/budget?month=${currentMonthKey}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setBudget({ ...response.data, month: readableMonth });
-      } catch (err) {
-        console.error("❌ Budget fetch error:", err.message);
-        setBudget(null);
-      } finally {
-        setLoading(false);
-      }
+    if (!token) return;
+
+    const refreshAll = () => {
+      fetchBudget();
+      fetchTransactionSummary();
     };
 
-    if (token) fetchBudget();
+    refreshAll(); // initial call
+
+    const intervalId = setInterval(() => {
+      refreshAll();
+    }, 1700); // 1.7 seconds
+
+    return () => clearInterval(intervalId);
   }, [token]);
 
   const balance = budget
-    ? (budget.openingBalance || 0) + (budget.actualIncome || 0) - (budget.actualExpenses || 0)
+    ? (budget.openingBalance || 0) +
+      (budget.actualIncome || 0) -
+      (budget.actualExpenses || 0)
     : 0;
-
-
-  useEffect(() => {
-    const fetchTransactionSummary = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/api/transactions/`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        const {
-          transactions = [],
-          // totalCredit = 0,
-          // totalDebit = 0,
-          netBalance = 0
-        } = res.data;
-
-        setTransactions(transactions);
-
-        setOverviewData({
-          // totalIncome: totalCredit,
-          // totalExpense: totalDebit,
-          balance: netBalance
-        });
-      } catch (err) {
-        console.error("Failed to fetch transaction summary:", err.response?.data?.message || err.message);
-      }
-    };
-
-    if (token) fetchTransactionSummary();
-  }, [token]);
-
-  const format = num => `₹${(num || 0).toLocaleString("en-IN")}`;
-
 
   return (
     <div className="max-w-4xl mx-auto pt-6">
@@ -85,6 +84,7 @@ const BudgetOverview = () => {
             Budget Overview
           </h3>
         </div>
+
         <div className="p-6">
           {loading ? (
             <p className="text-gray-500 text-center">Loading budget for {readableMonth}...</p>
@@ -97,7 +97,6 @@ const BudgetOverview = () => {
                 </span>
               </div>
 
-              {/* ✅ Opening Balance is now dynamic */}
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">Opening Balance</span>
                 <span className="font-medium text-blue-600">
@@ -113,7 +112,7 @@ const BudgetOverview = () => {
                       balance >= 0 ? "text-green-600" : "text-red-600"
                     }`}
                   >
-                    ₹{format(overviewData.balance)}
+                    {format(overviewData.balance)}
                   </span>
                 </div>
               </div>

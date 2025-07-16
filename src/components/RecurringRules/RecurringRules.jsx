@@ -1,42 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Edit, Trash2 } from "lucide-react";
+import BASE_URL from "../../services/url.js";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RecurringRules = () => {
-  // Sample data for demonstration - replace with your actual data source
-  const [recurringRules, setRecurringRules] = useState([
-    {
-      _id: "1",
-      description: "Monthly Rent Payment",
-      startDate: "2024-01-01",
-      frequency: "monthly",
-      amount: 25000,
-    },
-    {
-      _id: "2",
-      title: "Weekly Grocery Budget",
-      date: "2024-01-15",
-      frequency: "weekly",
-      amount: 3000,
-    },
-    {
-      _id: "3",
-      description: "Annual Insurance Premium",
-      startDate: "2024-03-01",
-      frequency: "yearly",
-      amount: 15000,
-    },
-  ]);
+  const [recurringRules, setRecurringRules] = useState([]);
+  const [operationLoading, setOperationLoading] = useState({});
+  const token = localStorage.getItem("token");
 
-  const openEditRecurring = (rule) => {
-    console.log("Edit recurring rule:", rule);
-    // Add your edit logic here
+  const setOperationLoadingState = (key, value) => {
+    setOperationLoading(prev => ({ ...prev, [key]: value }));
   };
 
-  const deleteRecurringRule = (ruleId) => {
-    if (
-      window.confirm("Are you sure you want to delete this recurring rule?")
-    ) {
-      setRecurringRules((prev) => prev.filter((rule) => rule._id !== ruleId));
+  const fetchRecurringRules = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/recurring/`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const rules = Array.isArray(res.data.recurring)
+        ? res.data.recurring
+        : Array.isArray(res.data)
+        ? res.data
+        : [];
+
+      setRecurringRules(rules);
+    } catch (err) {
+      console.error("Failed to fetch recurring rules:", err.response?.data?.message || err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (token) fetchRecurringRules();
+  }, [token]);
+
+  const deleteRecurringRule = async (id) => {
+    if (window.confirm("Are you sure you want to delete this recurring rule?")) {
+      try {
+        setOperationLoadingState("deleteRecurring", true);
+        await axios.delete(`${BASE_URL}/api/recurring/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        toast.success("Recurring rule deleted successfully!");
+        await fetchRecurringRules(); // ✅ trigger refresh after deletion
+      } catch (error) {
+        console.error("Error deleting recurring rule:", error);
+        toast.error("Failed to delete recurring rule. Please try again.");
+      } finally {
+        setOperationLoadingState("deleteRecurring", false);
+      }
     }
   };
 
@@ -59,22 +77,24 @@ const RecurringRules = () => {
                     <div className="flex items-center gap-4">
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-800">
-                          {rule.description || rule.title}
+                          {rule.description || rule.title || "Untitled Rule"}
                         </h3>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => openEditRecurring(rule)}
-                          className="text-blue-500 hover:text-blue-700 p-1 rounded hover:bg-blue-50 transition-colors"
-                          title="Edit recurring rule"
+                          disabled
+                          className="text-blue-500 p-1 opacity-60 cursor-not-allowed"
+                          title="Edit recurring rule (not implemented yet)"
                         >
                           <Edit size={16} />
                         </button>
 
                         <button
                           onClick={() => deleteRecurringRule(rule._id)}
-                          className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                          className={`text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors ${
+                            operationLoading.deleteRecurring ? "opacity-50 pointer-events-none" : ""
+                          }`}
                           title="Delete recurring rule"
                         >
                           <Trash2 size={16} />
@@ -85,23 +105,19 @@ const RecurringRules = () => {
                     <div className="flex items-center gap-6 mt-2 text-sm text-gray-600">
                       <span>
                         Start:{" "}
-                        {new Date(rule.startDate || rule.date).toLocaleDateString(
-                          "en-GB",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )}
+                        {new Date(rule.startsOn || rule.date).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric"
+                        })}
                       </span>
 
                       <span className="capitalize">
-                        {rule.frequency?.charAt(0).toUpperCase() +
-                          rule.frequency?.slice(1)}
+                        {rule.frequency?.charAt(0).toUpperCase() + rule.frequency?.slice(1)}
                       </span>
 
                       <span className="font-semibold text-green-600">
-                        ₹{(rule.amount || 0).toLocaleString()}
+                        ₹{(rule.amount || 0).toLocaleString("en-IN")}
                       </span>
                     </div>
                   </div>

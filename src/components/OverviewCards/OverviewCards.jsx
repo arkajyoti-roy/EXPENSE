@@ -13,35 +13,43 @@ const OverviewCards = () => {
 
   const token = localStorage.getItem("token");
 
+  const fetchTransactionSummary = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/transactions/`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const {
+        transactions = [],
+        totalCredit = 0,
+        totalDebit = 0,
+        netBalance = 0
+      } = res.data;
+
+      setTransactions(transactions);
+
+      setOverviewData({
+        totalIncome: totalCredit,
+        totalExpense: totalDebit,
+        balance: netBalance
+      });
+    } catch (err) {
+      console.error("Failed to fetch transaction summary:", err.response?.data?.message || err.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchTransactionSummary = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/api/transactions/`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+    if (!token) return;
 
-        const {
-          transactions = [],
-          totalCredit = 0,
-          totalDebit = 0,
-          netBalance = 0
-        } = res.data;
+    fetchTransactionSummary(); // initial fetch
 
-        setTransactions(transactions);
+    const intervalId = setInterval(() => {
+      fetchTransactionSummary();
+    }, 1700); // every 1.7 sec
 
-        setOverviewData({
-          totalIncome: totalCredit,
-          totalExpense: totalDebit,
-          balance: netBalance
-        });
-      } catch (err) {
-        console.error("Failed to fetch transaction summary:", err.response?.data?.message || err.message);
-      }
-    };
-
-    if (token) fetchTransactionSummary();
+    return () => clearInterval(intervalId); // cleanup
   }, [token]);
 
   const format = num => `₹${(num || 0).toLocaleString("en-IN")}`;
