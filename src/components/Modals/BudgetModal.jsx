@@ -15,7 +15,7 @@ const BudgetModal = ({ isOpen, onClose, initialData = null, onSuccess }) => {
     if (initialData) {
       setFormData({
         month: initialData.month || new Date().toISOString().slice(0, 7),
-        openingBalance: initialData.openingBalance || "",
+        openingBalance: initialData.openingBalance?.toString() || "",
       });
     }
   }, [initialData]);
@@ -30,7 +30,6 @@ const BudgetModal = ({ isOpen, onClose, initialData = null, onSuccess }) => {
 
     const openingBalanceNum = Number(formData.openingBalance);
 
-    // 🔒 Validation enforcement
     if (!formData.month) {
       toast.error("Month is required.");
       return;
@@ -47,21 +46,25 @@ const BudgetModal = ({ isOpen, onClose, initialData = null, onSuccess }) => {
     };
 
     try {
-      const method = initialData ? "put" : "post";
-      const url = initialData
-        ? `${BASE_URL}/api/budget/${initialData._id}`
-        : `${BASE_URL}/api/budget`;
+      let response;
 
-      await axios[method](url, payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      if (initialData && initialData._id) {
+        response = await axios.put(`${BASE_URL}/api/budget/${initialData._id}`, payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success("Budget updated successfully!");
+      } else {
+        response = await axios.post(`${BASE_URL}/api/budget`, payload, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success("Budget created successfully!");
+      }
 
-      toast.success(`Budget ${initialData ? "updated" : "created"} successfully!`);
       onSuccess?.();
       onClose();
     } catch (error) {
-      console.error("Error saving budget:", error);
-      toast.error("Failed to save budget.");
+      console.error("❌ Error saving budget:", error?.response?.data?.message || error.message);
+      toast.error("Failed to save budget. Please try again.");
     }
   };
 
@@ -75,8 +78,8 @@ const BudgetModal = ({ isOpen, onClose, initialData = null, onSuccess }) => {
             {initialData ? "Edit Budget" : "New Budget"}
           </h2>
 
-          {/* ❗ Optional: prevent manual close if modal is forced */}
-          {!initialData && (
+          {/* ⛔ Prevent closing if modal is enforced and no initialData */}
+          {initialData && (
             <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl">
               &times;
             </button>
@@ -103,7 +106,6 @@ const BudgetModal = ({ isOpen, onClose, initialData = null, onSuccess }) => {
           />
 
           <div className="flex justify-end gap-3 pt-2">
-            {/* ❗ Optional: hide cancel if modal is blocking */}
             {initialData && (
               <button type="button" onClick={onClose} className="px-4 py-2 text-sm bg-gray-100 rounded">
                 Cancel
