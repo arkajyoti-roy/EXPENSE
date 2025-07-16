@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, IndianRupee, Smartphone, Globe, Shield, TrendingUp, PlusCircle, BarChart3, Calculator, Menu, X } from 'lucide-react';
+import { ChevronDown, IndianRupee, Smartphone, ArrowRight, Globe, Shield, TrendingUp, PlusCircle, BarChart3, Calculator, Menu, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
@@ -440,23 +440,39 @@ const LandingPage = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="section-contact" className={`py-16 bg-emerald-50 transition-all duration-1000 ${isVisible['section-contact'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Ready to Start?
+      <section
+        id="section-contact"
+        className={`py-16 bg-emerald-50 transition-all duration-1000 ${
+          isVisible['section-contact'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900">
+              Ready to Transform Your Finances?
             </h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Join thousands of users who are already managing their finances better
+            <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+              Join thousands of users who have already taken control of their financial future with ExpenseTracker.
             </p>
-            <button  onClick={() => navigate('/register')} className="cursor-pointer bg-emerald-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-emerald-600 transition-all transform hover:scale-105 shadow-lg">
-              Start Your Free Journey
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => navigate('/register')}
+                className="bg-slate-700 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+              >
+                Start Using Free
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </button>
+              <button
+                className="border-2 border-slate-700 text-slate-700 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-slate-700 hover:text-white transition-all duration-300"
+              >
+                Watch Demo
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
+      
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
