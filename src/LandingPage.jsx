@@ -1,215 +1,238 @@
-import { useState, useEffect } from 'react';
-import { ChevronDown, IndianRupee, TrendingUp, Shield, Smartphone, BarChart3, PieChart, Calendar, ArrowRight, Star, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, Smartphone, Globe, Shield, TrendingUp, PlusCircle, BarChart3, Calculator, Menu, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [scrollY, setScrollY] = useState(0);
-  const [visibleSections, setVisibleSections] = useState(new Set());
+  const [isVisible, setIsVisible] = useState({});
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => setIsLoading(false), 2000);
-    
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVisibleSections(prev => new Set([...prev, entry.target.id]));
+            setIsVisible(prev => ({ ...prev, [entry.target.id]: true }));
           }
         });
       },
       { threshold: 0.1 }
     );
 
-    const sections = document.querySelectorAll('[data-animate]');
-    sections.forEach((section) => observer.observe(section));
+    const elements = document.querySelectorAll('[id^="section-"]');
+    elements.forEach(el => observer.observe(el));
 
     return () => observer.disconnect();
-  }, [isLoading]);
+  }, []);
 
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center z-50">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-20 h-20 bg-gradient-to-r from-slate-700 to-slate-900 rounded-2xl flex items-center justify-center mb-6 mx-auto animate-pulse">
-              <IndianRupee className="w-10 h-10 text-white" />
-            </div>
-            <div className="absolute -top-2 -right-2 w-6 h-6 bg-slate-600 rounded-full animate-ping"></div>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">ExpenseTracker</h2>
-          <div className="w-32 h-1 bg-gray-200 rounded-full mx-auto overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-slate-600 to-slate-800 rounded-full animate-pulse"></div>
-          </div>
-          <p className="text-gray-600 mt-4 animate-pulse">Loading your financial dashboard...</p>
-        </div>
-      </div>
-    );
-  }
+  const scrollToSection = (id) => {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
 
   return (
-    <div className="bg-white overflow-hidden">
-      /* Navigation */
-        <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md z-40 border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-slate-700 to-slate-900 rounded-lg flex items-center justify-center">
-              <IndianRupee className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 shadow-sm animate-fade-in">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-slate-700 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-lg">₹</span>
+              </div>
+              <span className="text-xl font-bold text-slate-800">ExpenseTracker</span>
             </div>
-            <span className="text-xl font-bold text-slate-900">ExpenseTracker</span>
-          </div>
-          <div className="hidden md:flex items-center space-x-8">
-            <button
-              className="bg-gradient-to-r from-slate-700 to-slate-900 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-              onClick={() => navigate('/register')}
-            >
-              Sign up
-            </button>
-            <button
-              className="bg-gradient-to-r from-slate-700 to-slate-900 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-              onClick={() => navigate('/login')}
-            >
-              Sign in
-            </button>
-          </div>
-            </div>
-          </div>
-        </nav>
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-8">
+              <button onClick={() => scrollToSection('section-features')} className="cursor-pointer text-slate-600 hover:text-slate-800 transition-colors">Features</button>
+              <button onClick={() => scrollToSection('section-how-it-works')} className="cursor-pointer text-slate-600 hover:text-slate-800 transition-colors">How It Works</button>
+              <button onClick={() => scrollToSection('section-pricing')} className="cursor-pointer text-slate-600 hover:text-slate-800 transition-colors">Pricing</button>
+              <button onClick={() => scrollToSection('section-contact')} className="cursor-pointer text-slate-600 hover:text-slate-800 transition-colors">Contact</button>
+            </nav>
 
-        {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-gray-50">
-        <div 
-          className="absolute inset-0 bg-gradient-to-r from-slate-100/20 to-gray-100/20"
-          style={{
-            transform: `translateY(${scrollY * 0.5}px)`,
-          }}
-        />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24">
-          <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6">
-              Master Your
-              <span className="block bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text text-transparent">
-                Financial Future
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl mx-auto">
-              Track expenses, manage budgets, and achieve your financial goals with our intelligent expense tracking platform.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => navigate('/register')} className="bg-gradient-to-r from-slate-700 to-slate-900 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                Start Using Free
-              </button>
-              <button className="border-2 border-slate-300 text-slate-700 px-8 py-4 rounded-xl text-lg font-semibold hover:border-slate-400 transition-all duration-300">
-                Watch Demo
-              </button>
+            {/* Desktop Auth Buttons */}
+            <div className="hidden md:flex space-x-3 ">
+              <button  onClick={() => navigate('/login')} className="cursor-pointer px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors">Sign in</button>
+              <button  onClick={() => navigate('/register')} className="cursor-pointer px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors">Sign up</button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button 
+              className="md:hidden cursor-pointer"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-white border-t animate-slide-down">
+            <div className="px-4 py-2 space-y-2">
+              <button onClick={() => scrollToSection('section-features')} className="cursor-pointer block w-full text-left py-2 text-slate-600 hover:text-slate-800 transition-colors">Features</button>
+              <button onClick={() => scrollToSection('section-how-it-works')} className="cursor-pointer block w-full text-left py-2 text-slate-600 hover:text-slate-800 transition-colors">How It Works</button>
+              <button onClick={() => scrollToSection('section-pricing')} className="cursor-pointer block w-full text-left py-2 text-slate-600 hover:text-slate-800 transition-colors">Pricing</button>
+              <button onClick={() => scrollToSection('section-contact')} className="cursor-pointer block w-full text-left py-2 text-slate-600 hover:text-slate-800 transition-colors">Contact</button>
+              <div className="pt-2 border-t flex space-x-2">
+                <button  onClick={() => navigate('/login')} className="cursor-pointer px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors">Sign in</button>
+                <button  onClick={() => navigate('/register')} className="cursor-pointer px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors">Sign up</button>
+              </div>
             </div>
           </div>
+        )}
+      </header>
 
-          {/* Floating Dashboard Preview */}
-          <div className="mt-16 relative">
-            <div 
-              className="transform transition-all duration-1000"
-              style={{
-                transform: `translateY(${scrollY * 0.2}px) rotateX(${scrollY * 0.02}deg)`,
-              }}
-            >
-              <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-4xl mx-auto border border-slate-200">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-6 h-6 bg-gradient-to-r from-slate-700 to-slate-900 rounded-lg flex items-center justify-center">
-                      <IndianRupee className="w-3 h-3 text-white" />
+      {/* Hero Section */}
+      <section className="pt-41 pb-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Text Content */}
+            <div className="animate-fade-in-up">
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                Master Your
+                <span className="text-slate-700 block">Financial Future</span>
+              </h1>
+              <p className="text-xl text-slate-600 mb-8">
+                Track expenses, manage budgets, and achieve your financial goals with
+                our intelligent expense tracking platform.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button  onClick={() => navigate('/register')} className="cursor-pointer bg-slate-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-slate-800 transition-all transform hover:scale-105 shadow-lg">
+                  Start Using Free
+                </button>
+                <button className="cursor-pointer border border-slate-300 text-slate-600 px-8 py-4 rounded-lg font-semibold hover:bg-slate-50 transition-all">
+                  Watch Demo
+                </button>
+              </div>
+            </div>
+
+            {/* Right Side - App Preview */}
+            <div className="relative animate-fade-in-up animation-delay-300">
+              {/* Desktop View */}
+              <div className="hidden md:block relative">
+                <div className="bg-white rounded-2xl shadow-2xl p-6 transform hover:scale-105 transition-transform duration-500">
+                  <div className="flex items-center space-x-2 mb-6">
+                    <div className="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center">
+                      <span className="text-white font-bold">₹</span>
                     </div>
-                    <span className="font-semibold text-slate-900">ExpenseTracker</span>
+                    <span className="font-bold text-slate-800">ExpenseTracker</span>
+                    <div className="ml-auto flex space-x-2">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                    <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
-                    <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+                  
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <div className="text-sm text-gray-600 mb-1">Total Income</div>
+                      <div className="text-2xl font-bold text-green-600">₹5,247.80</div>
+                    </div>
+                    <div className="bg-red-50 p-4 rounded-lg">
+                      <div className="text-sm text-gray-600 mb-1">Total Expenses</div>
+                      <div className="text-2xl font-bold text-red-600">₹3,182.45</div>
+                    </div>
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <div className="text-sm text-gray-600 mb-1">Current Balance</div>
+                      <div className="text-2xl font-bold text-blue-600">₹2,065.35</div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <div className="text-lg font-semibold text-slate-800 mb-3">Recent Transactions</div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                          <span className="text-sm">Food</span>
+                          <span className="text-sm text-red-600">-₹650</span>
+                        </div>
+                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                          <span className="text-sm">Rent</span>
+                          <span className="text-sm text-red-600">-₹2,000</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-lg font-semibold text-slate-800 mb-3">Budget Overview</div>
+                      <div className="space-y-2">
+                        <div className="text-sm text-gray-600">July 2025</div>
+                        <div className="text-sm">Opening Balance: ₹5,000</div>
+                        <div className="text-sm font-semibold text-green-600">Current Balance: ₹2,350</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Views */}
+              <div className="md:hidden flex justify-center space-x-4">
+                <div className="w-48 bg-black rounded-3xl p-2 transform hover:scale-105 transition-transform duration-500 rotate-3">
+                  <div className="bg-white rounded-2xl h-96 overflow-hidden">
+                    <div className="bg-gray-100 p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-xs">4:56 PM</div>
+                        <div className="text-xs">5G</div>
+                      </div>
+                      <div className="flex items-center space-x-2 mb-4">
+                        <div className="w-6 h-6 bg-slate-700 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">₹</span>
+                        </div>
+                        <span className="text-sm font-bold">ExpenseTracker</span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 space-y-3">
+                      <div className="bg-green-50 p-3 rounded-lg">
+                        <div className="text-xs text-gray-600">Total Income</div>
+                        <div className="text-lg font-bold text-green-600">₹200</div>
+                      </div>
+                      <div className="bg-red-50 p-3 rounded-lg">
+                        <div className="text-xs text-gray-600">Total Expenses</div>
+                        <div className="text-lg font-bold text-red-600">₹101</div>
+                      </div>
+                      <div className="bg-blue-50 p-3 rounded-lg">
+                        <div className="text-xs text-gray-600">Current Balance</div>
+                        <div className="text-lg font-bold text-blue-600">₹5,099</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-slate-600">Total Income</p>
-                        <p className="text-2xl font-bold text-emerald-700">₹5,247.80</p>
+                <div className="w-48 bg-black rounded-3xl p-2 transform hover:scale-105 transition-transform duration-500 -rotate-3">
+                  <div className="bg-white rounded-2xl h-96 overflow-hidden">
+                    <div className="bg-gray-100 p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-xs">4:57 PM</div>
+                        <div className="text-xs">5G</div>
                       </div>
-                      <TrendingUp className="w-8 h-8 text-emerald-600" />
-                    </div>
-                  </div>
-                  <div className="bg-rose-50 p-4 rounded-lg border border-rose-100">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-slate-600">Total Expenses</p>
-                        <p className="text-2xl font-bold text-rose-700">₹3,182.45</p>
-                      </div>
-                      <BarChart3 className="w-8 h-8 text-rose-600" />
-                    </div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-slate-600">Current Balance</p>
-                        <p className="text-2xl font-bold text-slate-800">₹2,065.35</p>
-                      </div>
-                      <PieChart className="w-8 h-8 text-slate-600" />
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="font-semibold text-slate-900 mb-3">Recent Transactions</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center py-2 border-b border-slate-100">
-                        <span className="text-sm text-slate-600">Grocery Shopping</span>
-                        <span className="text-sm font-medium text-rose-700">-₹125.5</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-slate-100">
-                        <span className="text-sm text-slate-600">Salary Deposit</span>
-                        <span className="text-sm font-medium text-emerald-700">+₹2,500</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2">
-                        <span className="text-sm text-slate-600">Coffee Shop</span>
-                        <span className="text-sm font-medium text-rose-700">-₹8.75</span>
+                      <div className="flex items-center space-x-2 mb-4">
+                        <div className="w-6 h-6 bg-slate-700 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">₹</span>
+                        </div>
+                        <span className="text-sm font-bold">ExpenseTracker</span>
                       </div>
                     </div>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-slate-900 mb-3">Budget Overview</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-slate-600">Monthly Rent</span>
-                          <span className="text-slate-900">₹1,200 / ₹1,200</span>
+                    
+                    <div className="p-4">
+                      <div className="text-sm font-semibold mb-3">Recent Transactions</div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                          <span className="text-xs">Food</span>
+                          <span className="text-xs text-red-600">-₹650</span>
                         </div>
-                        <div className="w-full bg-slate-200 rounded-full h-2">
-                          <div className="bg-slate-600 h-2 rounded-full w-full"></div>
+                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                          <span className="text-xs">Rent</span>
+                          <span className="text-xs text-red-600">-₹2,000</span>
                         </div>
                       </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-slate-600">Groceries</span>
-                          <span className="text-slate-900">₹285 / ₹400</span>
-                        </div>
-                        <div className="w-full bg-slate-200 rounded-full h-2">
-                          <div className="bg-emerald-600 h-2 rounded-full w-3/4"></div>
-                        </div>
+                      
+                      <div className="mt-4">
+                        <div className="text-sm font-semibold mb-2">Budget Overview</div>
+                        <div className="text-xs text-gray-600">July 2025</div>
+                        <div className="text-xs">Opening Balance: ₹5,000</div>
+                        <div className="text-xs font-semibold text-green-600">Current Balance: ₹2,350</div>
                       </div>
                     </div>
                   </div>
@@ -218,81 +241,112 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown className="w-6 h-6 text-slate-400" />
+        
+        {/* Scroll Indicator */}
+        <div className="text-center mt-16 animate-bounce">
+          <ChevronDown size={32} className="mx-auto text-slate-400" />
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-slate-50" data-animate>
+      <section id="section-features" className={`py-16 bg-white transition-all duration-1000 ${isVisible['section-features'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-1000 ${
-            visibleSections.has('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-              Powerful Features for
-              <span className="block text-slate-700">Smart Money Management</span>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
+              Powerful Features
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Everything you need to take control of your finances, all in one beautiful and intuitive platform.
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Everything you need to manage your personal finances effectively
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: <BarChart3 className="w-8 h-8" />,
+                icon: <BarChart3 className="w-8 h-8 text-white" />,
                 title: "Smart Analytics",
                 description: "Get deep insights into your spending patterns with AI-powered analytics and personalized recommendations.",
-                color: "from-slate-600 to-slate-800"
+                bgColor: "bg-slate-700"
               },
               {
-                icon: <Shield className="w-8 h-8" />,
+                icon: <Shield className="w-8 h-8 text-white" />,
                 title: "Bank-Level Security",
                 description: "Your financial data is protected with 256-bit encryption and industry-leading security measures.",
-                color: "from-emerald-600 to-emerald-800"
+                bgColor: "bg-emerald-600"
               },
               {
-                icon: <Smartphone className="w-8 h-8" />,
+                icon: <Smartphone className="w-8 h-8 text-white" />,
                 title: "Mobile First",
                 description: "Access your finances anywhere with our responsive design and native mobile apps.",
-                color: "from-stone-600 to-stone-800"
+                bgColor: "bg-slate-600"
               },
               {
-                icon: <Calendar className="w-8 h-8" />,
+                icon: <Calculator className="w-8 h-8 text-white" />,
                 title: "Budget Planning",
                 description: "Create and track budgets with intelligent forecasting and automated alerts.",
-                color: "from-amber-600 to-amber-800"
+                bgColor: "bg-orange-600"
               },
               {
-                icon: <PieChart className="w-8 h-8" />,
+                icon: <PlusCircle className="w-8 h-8 text-white" />,
                 title: "Visual Reports",
                 description: "Beautiful charts and graphs that make understanding your finances simple and engaging.",
-                color: "from-blue-600 to-blue-800"
+                bgColor: "bg-blue-600"
               },
               {
-                icon: <TrendingUp className="w-8 h-8" />,
+                icon: <TrendingUp className="w-8 h-8 text-white" />,
                 title: "Goal Tracking",
                 description: "Set financial goals and track your progress with motivating visualizations and milestones.",
-                color: "from-indigo-600 to-indigo-800"
+                bgColor: "bg-purple-600"
               }
             ].map((feature, index) => (
-              <div
-                key={index}
-                className={`bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:scale-105 border border-slate-200 ${
-                  visibleSections.has('features') 
-                    ? 'opacity-100 translate-y-0' 
-                    : 'opacity-0 translate-y-8'
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center text-white mb-6`}>
+              <div key={index} className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div className={`mx-auto mb-4 w-16 h-16 ${feature.bgColor} rounded-xl flex items-center justify-center`}>
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">{feature.title}</h3>
-                <p className="text-slate-600">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-slate-800 mb-3">{feature.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="section-how-it-works" className={`py-16 bg-gray-50 transition-all duration-1000 ${isVisible['section-how-it-works'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Get started in minutes with our simple three-step process
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                step: "01",
+                title: "Sign Up",
+                description: "Create your free account and set up your profile"
+              },
+              {
+                step: "02",
+                title: "Add Transactions",
+                description: "Start logging your income and expenses"
+              },
+              {
+                step: "03",
+                title: "Track & Analyze",
+                description: "Monitor your spending and achieve your goals"
+              }
+            ].map((step, index) => (
+              <div key={index} className="text-center">
+                <div className="mx-auto mb-4 w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                  {step.step}
+                </div>
+                <h3 className="text-xl font-semibold text-slate-800 mb-2">{step.title}</h3>
+                <p className="text-slate-600">{step.description}</p>
               </div>
             ))}
           </div>
@@ -300,149 +354,170 @@ const LandingPage = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-white" data-animate>
+      <section id="section-pricing" className={`py-16 bg-white transition-all duration-1000 ${isVisible['section-pricing'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-1000 ${
-            visibleSections.has('pricing') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-              Completely Free
-              <span className="block text-slate-700">No Hidden Costs</span>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4">
+              Simple Pricing
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              ExpenseTracker is 100% free for everyone. No subscriptions, no premium features, no limitations.
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Start for free. No hidden charges. No subscription fees.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="max-w-md mx-auto">
+            <div className="bg-white rounded-2xl p-8 text-center border-2 border-slate-200 shadow-lg">
+              <div className="mb-6">
+                <div className="text-5xl font-bold text-slate-700 mb-2">FREE</div>
+                <div className="text-slate-600">Forever</div>
+              </div>
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center justify-center space-x-2">
+                  <div className="w-4 h-4 bg-slate-700 rounded-full"></div>
+                  <span>Unlimited transactions</span>
+                </li>
+                <li className="flex items-center justify-center space-x-2">
+                  <div className="w-4 h-4 bg-slate-700 rounded-full"></div>
+                  <span>Budget tracking</span>
+                </li>
+                <li className="flex items-center justify-center space-x-2">
+                  <div className="w-4 h-4 bg-slate-700 rounded-full"></div>
+                  <span>Expense analytics</span>
+                </li>
+                <li className="flex items-center justify-center space-x-2">
+                  <div className="w-4 h-4 bg-slate-700 rounded-full"></div>
+                  <span>All devices support</span>
+                </li>
+              </ul>
+              <button  onClick={() => navigate('/register')} className="w-full cursor-pointer bg-slate-700 text-white py-4 rounded-lg font-semibold hover:bg-slate-800 transition-all transform hover:scale-105">
+                Get Started Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Platform Compatibility */}
+      <section className={`py-16 bg-gray-900 text-white transition-all duration-1000 ${isVisible['section-pricing'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Available Everywhere
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Access your expense tracker from any device, anywhere
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: "Personal",
-                price: "Free Forever",
-                description: "Perfect for individual users",
-                features: ["Unlimited transactions", "Advanced analytics", "Mobile app access", "Budget planning", "Goal tracking", "Email support", "Data export", "Custom categories"],
-                color: "border-slate-300 ring-2 ring-slate-300",
-                button: "bg-gradient-to-r from-slate-700 to-slate-900 text-white hover:shadow-lg",
-                popular: true
+                icon: <Globe className="w-12 h-12 text-emerald-400" />,
+                title: "Web App",
+                description: "Access from any browser on desktop or mobile"
               },
               {
-                name: "Business",
-                price: "Free Forever",
-                description: "For teams and businesses",
-                features: ["Everything in Personal", "Team collaboration", "Advanced reporting", "Multi-user access", "Priority support", "API access", "Custom integrations", "Dedicated dashboard"],
-                color: "border-slate-400 ring-2 ring-slate-400",
-                button: "bg-gradient-to-r from-slate-600 to-slate-800 text-white hover:shadow-lg",
-                popular: true
+                icon: <Smartphone className="w-12 h-12 text-blue-400" />,
+                title: "Mobile App",
+                description: "Native iOS and Android apps coming soon"
+              },
+              {
+                icon: <Shield className="w-12 h-12 text-purple-400" />,
+                title: "Secure & Private",
+                description: "Your data is encrypted and secure"
               }
-            ].map((plan, index) => (
-              <div
-                key={index}
-                className={`relative bg-white rounded-2xl p-8 shadow-lg ${plan.color} transition-all duration-500 transform hover:scale-105 ${
-                  visibleSections.has('pricing') 
-                    ? 'opacity-100 translate-y-0' 
-                    : 'opacity-0 translate-y-8'
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-slate-700 to-slate-900 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center">
-                      <Star className="w-4 h-4 mr-1" />
-                      100% Free
-                    </div>
-                  </div>
-                )}
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">{plan.name}</h3>
-                  <div className="text-4xl font-bold text-slate-900 mb-2">{plan.price}</div>
-                  <p className="text-slate-600">{plan.description}</p>
+            ].map((item, index) => (
+              <div key={index} className="text-center p-6">
+                <div className="mx-auto mb-4 w-20 h-20 bg-gray-800 rounded-xl flex items-center justify-center">
+                  {item.icon}
                 </div>
-                <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center">
-                      <Check className="w-5 h-5 text-emerald-600 mr-3 flex-shrink-0" />
-                      <span className="text-slate-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${plan.button}`}>
-                  Get Started - Free
-                </button>
+                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                <p className="text-gray-300">{item.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-slate-700 to-slate-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-fade-in-up">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Transform Your Finances?
+      {/* Contact Section */}
+      <section id="section-contact" className={`py-16 bg-emerald-50 transition-all duration-1000 ${isVisible['section-contact'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Ready to Start?
             </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of users who have already taken control of their financial future with ExpenseTracker.
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Join thousands of users who are already managing their finances better
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => navigate('/register')} className="bg-white text-slate-900 px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
-                Start Using Free
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-slate-900 transition-all duration-300">
-                Watch Demo
-              </button>
-            </div>
+            <button  onClick={() => navigate('/register')} className="cursor-pointer bg-emerald-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-emerald-600 transition-all transform hover:scale-105 shadow-lg">
+              Start Your Free Journey
+            </button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
+      <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-slate-700 to-slate-800 rounded-lg flex items-center justify-center">
-                  <IndianRupee className="w-5 h-5 text-white" />
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
+                <div className="w-6 h-6 bg-white rounded-sm flex items-center justify-center">
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
                 </div>
-                <span className="text-xl font-bold">ExpenseTracker</span>
               </div>
-              <p className="text-slate-400">
-                Empowering you to take control of your financial future with intelligent expense tracking.
-              </p>
+              <span className="text-xl font-bold">ExpenseTracker</span>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Mobile App</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
-              </ul>
-            </div>
+            <p className="text-gray-400 mb-4">
+              Your personal finance companion
+            </p>
+            {/* <p className="text-gray-500 text-sm">
+              © 2025 ExpenseTracker. All rights reserved.
+            </p> */}
           </div>
-          
         </div>
       </footer>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+          from { 
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to { 
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideDown {
+          from { 
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to { 
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 1s ease-out;
+        }
+        
+        .animate-fade-in-up {
+          animation: fadeInUp 1s ease-out;
+        }
+        
+        .animate-slide-down {
+          animation: slideDown 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 };
