@@ -6,7 +6,7 @@ import ActionButton from "./components/ActionButtons/ActionButton.jsx";
 // import RecurringRules from './components/RecurringRules/RecurringRules.jsx';
 // import BudgetRecurring from "./components/BudgetRecurring.jsx";
 import RecentTranBudRecuu from "./components/RecentTranBudRecuu.jsx";
-import DashboardWrapper from "./components/Budgetoverview/DashboardWrapper.jsx";
+import DashboardWrapper from "./components/budgetoverview/DashboardWrapper.jsx";
 function AllComp() {
   return (
     <>
