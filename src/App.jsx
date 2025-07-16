@@ -1,18 +1,26 @@
 import "./App.css";
-// import ExpenseProvider from "./context/ExpenseContext";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
+  Navigate
 } from "react-router-dom";
 import Login from "./components/Auth/Login.jsx";
-import { useState, useEffect } from "react";
-import AllComp from "./AllComp";
-import LandingPage from "./LandingPage.jsx";
 import Register from "./components/Auth/Registration.jsx";
+import LandingPage from "./LandingPage.jsx";
+import AllComp from "./AllComp.jsx";
+import { useState, useEffect } from "react";
+import ExpenseTrackerLoader from "./ExpenseTrackerLoader.jsx";
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Show loader for 1.7 seconds
+    const timer = setTimeout(() => setLoading(false), 1050);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const handleStorage = () => {
@@ -35,9 +43,12 @@ function App() {
     };
   }, []);
 
+  if (loading) {
+    return <ExpenseTrackerLoader />;
+  }
+
   return (
     <>
-      {/* <ExpenseProvider> */}
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -57,7 +68,6 @@ function App() {
       <footer className="text-center text-gray-500 text-xs p-4 -mt-12">
         &copy; {new Date().getFullYear()} Expense Tracker. All rights reserved.
       </footer>
-    {/* </ExpenseProvider> */}
     </>
   );
 }
