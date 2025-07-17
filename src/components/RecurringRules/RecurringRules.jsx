@@ -35,16 +35,11 @@ const RecurringRules = () => {
     }
   };
 
-  // ⏱ Poll every 1.7 seconds
   useEffect(() => {
     if (!token) return;
 
     fetchRecurringRules(); // Initial fetch
-
-    const interval = setInterval(() => {
-      fetchRecurringRules();
-    }, 1700);
-
+    const interval = setInterval(fetchRecurringRules, 1700); // Poll every 1.7s
     return () => clearInterval(interval);
   }, [token]);
 
@@ -140,8 +135,12 @@ const RecurringRules = () => {
                         })}
                       </span>
                       <span className="capitalize">{rule.frequency}</span>
-                      <span className="font-semibold text-green-600">
-                        ₹{(rule.amount || 0).toLocaleString("en-IN")}
+                      <span
+                        className={`font-semibold ${
+                          rule.type === "credit" ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
+                        {rule.type === "credit" ? "+ " : "– "}₹{(rule.amount || 0).toLocaleString("en-IN")}
                       </span>
                     </div>
                   </div>
