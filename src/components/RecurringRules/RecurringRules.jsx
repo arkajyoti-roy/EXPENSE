@@ -4,7 +4,7 @@ import { Edit, Trash2, Plus } from "lucide-react";
 import BASE_URL from "../../services/url.js";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import RecurringModal from "../Modals/RecurringModal"; // ✅ Modal import
+import RecurringModal from "../Modals/RecurringModal";
 
 const RecurringRules = () => {
   const [recurringRules, setRecurringRules] = useState([]);
@@ -23,12 +23,11 @@ const RecurringRules = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      const rules =
-        Array.isArray(res.data.recurring)
-          ? res.data.recurring
-          : Array.isArray(res.data)
-          ? res.data
-          : [];
+      const rules = Array.isArray(res.data.recurring)
+        ? res.data.recurring
+        : Array.isArray(res.data)
+        ? res.data
+        : [];
 
       setRecurringRules(rules);
     } catch (err) {
@@ -36,8 +35,17 @@ const RecurringRules = () => {
     }
   };
 
+  // ⏱ Poll every 1.7 seconds
   useEffect(() => {
-    if (token) fetchRecurringRules();
+    if (!token) return;
+
+    fetchRecurringRules(); // Initial fetch
+
+    const interval = setInterval(() => {
+      fetchRecurringRules();
+    }, 1700);
+
+    return () => clearInterval(interval);
   }, [token]);
 
   const deleteRecurringRule = async (id) => {
@@ -148,7 +156,6 @@ const RecurringRules = () => {
         </div>
       </div>
 
-      {/* ✅ Modal Integration */}
       <RecurringModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
