@@ -72,6 +72,7 @@ function App() {
     <>
       <Router>
         <Routes>
+          <Route path="/home/*" element={token ? <AllComp /> : <Navigate to="/login" replace />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

@@ -4,8 +4,11 @@ import TransactionModal from "../Modals/TransactionModal";
 import RecurringModal from "../Modals/RecurringModal";
 import BudgetModal from "../Modals/BudgetModal";
 import BASE_URL from "../../services/url";
+import { useNavigate } from "react-router-dom";
 
 const ActionButton = ({ fetchData }) => {
+  const navigate = useNavigate();
+
   const [modalOpenTx, setModalOpenTx] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
 
@@ -87,6 +90,21 @@ const ActionButton = ({ fetchData }) => {
             {isBudgetSet ? "Update Budget" : "Create Budget"}
           </span>
         </button>
+
+
+       <button
+  onClick={() => navigate("/home/history")}
+  className="flex items-center justify-center sm:justify-start space-x-2 bg-blue-500 text-white px-4 py-2.5 sm:py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 w-full sm:w-auto"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+    <path d="M21 3v5h-5"/>
+    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+    <path d="M3 21v-5h5"/>
+  </svg>
+  <span className="text-sm font-medium">History</span>
+</button>
+
       </div>
 
       {/* Transaction Modal */}
