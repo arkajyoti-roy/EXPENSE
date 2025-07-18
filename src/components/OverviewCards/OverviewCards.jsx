@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import BASE_URL from "../../services/url.js";
+import { ChevronDown, IndianRupee, TrendingUp, Shield, Smartphone, BarChart3, PieChart, Calendar, ArrowRight, Star, Check } from 'lucide-react';
 
 const OverviewCards = () => {
   const [overviewData, setOverviewData] = useState({
@@ -64,12 +65,14 @@ const OverviewCards = () => {
             <p className="text-2xl sm:text-3xl font-bold text-emerald-800 truncate">
               {format(overviewData.totalIncome)}
             </p>
-            <p className="text-xs text-emerald-500 mt-1">+12.5% from last month</p>
+            <p className="text-xs text-emerald-500 mt-1">In this month</p>
           </div>
-          <div className="bg-emerald-500 p-2 sm:p-3 rounded-full ml-2 sm:ml-4 flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className=" p-2 sm:p-3 rounded-full ml-2 sm:ml-4 flex-shrink-0">
+            {/* <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2v20m5-5l-5-5-5 5" />
-            </svg>
+            </svg> */}
+            {/* <img className="w-5 h-5 sm:w-6 sm:h-6  " src="income-amount-svgrepo-com.svg" alt="" /> */}
+            <TrendingUp className="w-8 h-8 text-emerald-600" />
           </div>
         </div>
       </div>
@@ -82,12 +85,15 @@ const OverviewCards = () => {
             <p className="text-2xl sm:text-3xl font-bold text-red-800 truncate">
               {format(overviewData.totalExpense)}
             </p>
-            <p className="text-xs text-red-500 mt-1">+8.2% from last month</p>
+            {/* <p className="text-xs text-red-500 mt-1">+8.2% from last month</p> */}
+            <p className="text-xs text-red-500 mt-1">In this month</p>
+
           </div>
-          <div className="bg-red-500 p-2 sm:p-3 rounded-full ml-2 sm:ml-4 flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className=" p-2 sm:p-3 rounded-full ml-2 sm:ml-4 flex-shrink-0">
+            {/* <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2v20m5-5l-5 5-5-5" />
-            </svg>
+            </svg> */}
+            <BarChart3 className="w-8 h-8 text-rose-600" />
           </div>
         </div>
       </div>
@@ -102,12 +108,13 @@ const OverviewCards = () => {
             </p>
             <p className="text-xs text-blue-500 mt-1">Available balance</p>
           </div>
-          <div className="bg-blue-500 p-2 sm:p-3 rounded-full ml-2 sm:ml-4 flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className=" p-2 sm:p-3 rounded-full ml-2 sm:ml-4 flex-shrink-0">
+            {/* <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="1" y="3" width="15" height="13" />
               <path d="M16 8h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-4" />
               <circle cx="9" cy="9" r="2" />
-            </svg>
+            </svg> */}
+     <PieChart className="w-8 h-8 text-slate-600" />
           </div>
         </div>
       </div>

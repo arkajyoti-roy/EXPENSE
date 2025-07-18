@@ -56,7 +56,7 @@ const Navbar = () => {
 
             <button
               onClick={handleLogout}
-              className="p-2 text-red-600 hover:bg-red-50 rounded-full border border-red-200 transition"
+              className="p-2 text-red-600 cursor-pointer hover:bg-red-50 rounded-full border border-red-200 transition"
               title="Logout"
             >
               <svg 
