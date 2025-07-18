@@ -160,12 +160,15 @@ const Login = () => {
                 <input type="checkbox" className="w-4 h-4 text-slate-600 rounded border-gray-300 focus:ring-slate-500" />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <button type="button" className="cursor-pointer text-sm text-slate-600 hover:text-slate-800 transition-colors">
+              <button
+              //  onClick={window.confirm("So Sad, Please Contact the DEV")}
+               className="cursor-pointer text-sm text-slate-600 hover:text-slate-800 transition-colors">
                 Forgot password?
               </button>
             </div>
 
             <button
+            type="submit"
               onClick={handleSubmit}
               disabled={isLoading}
               className="cursor-pointer w-full bg-slate-800 text-white py-3 px-4 rounded-lg hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-base"
