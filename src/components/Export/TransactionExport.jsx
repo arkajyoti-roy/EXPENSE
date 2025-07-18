@@ -116,107 +116,166 @@ const TransactionExport = () => {
   };
 
   return (
-    <>
-      <div className="pt-28 px-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-4 bg-gray-100 px-3 py-1 rounded text-sm hover:bg-gray-200"
-        >
-          ← Back
-        </button>
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header with Back Button */}
+        <div className="mb-6 pt-20">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back
+          </button>
+        </div>
 
-        <div className="bg-white p-6 rounded shadow border border-gray-200 max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-800">📄 Transactions</h2>
-              <p className="text-sm text-gray-500">
-                {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? "s" : ""} found
-              </p>
+        {/* Main Content Card */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          {/* Card Header */}
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900">Transactions</h1>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? "s" : ""} found
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={exportPDF}
+                disabled={filteredTransactions.length === 0}
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download PDF
+              </button>
             </div>
-            <button
-              onClick={exportPDF}
-              disabled={filteredTransactions.length === 0}
-              className="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 disabled:opacity-50"
-            >
-              Download as PDF
-            </button>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-6">
-            <select
-              value={selectedYear}
-              onChange={(e) => {
-                setSelectedYear(e.target.value);
-                setSelectedMonth("");
-              }}
-              className="border border-gray-300 rounded px-3 py-2 text-sm"
-            >
-              <option value="">Select Year</option>
-              {Object.keys(availableMonths).map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
+          {/* Filters Section */}
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                <select
+                  value={selectedYear}
+                  onChange={(e) => {
+                    setSelectedYear(e.target.value);
+                    setSelectedMonth("");
+                  }}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Year</option>
+                  {Object.keys(availableMonths).map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
 
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              disabled={!selectedYear}
-              className="border border-gray-300 rounded px-3 py-2 text-sm"
-            >
-              <option value="">Select Month</option>
-              {selectedYear &&
-                availableMonths[selectedYear]?.map(month => (
-                  <option key={month} value={month}>
-                    {monthNames[month]} ({month})
-                  </option>
-                ))}
-            </select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Month</label>
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  disabled={!selectedYear}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select Month</option>
+                  {selectedYear &&
+                    availableMonths[selectedYear]?.map(month => (
+                      <option key={month} value={month}>
+                        {monthNames[month]} ({month})
+                      </option>
+                    ))}
+                </select>
+              </div>
 
-            <input
-              type="text"
-              placeholder="Search by description, amount, type, date..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm"
-            />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search transactions..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Transaction List */}
-          <div className="overflow-y-auto space-y-4" style={{ maxHeight: "36rem" }}>
-            {filteredTransactions.length > 0 ? (
-              filteredTransactions
-                .slice()
-                .reverse()
-                .map(tx => (
-                  <div
-                    key={tx._id}
-                    className="flex justify-between items-center p-4 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors"
-                  >
-                    <div>
-                      <p className="font-medium text-gray-800">{tx.description}</p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(tx.date).toLocaleDateString("en-GB")}
-                      </p>
-                    </div>
-                    <span
-                      className={`font-bold ${
-                        tx.type === "credit" ? "text-green-600" : "text-red-600"
-                      }`}
+          <div className="p-6">
+            <div className="space-y-3" style={{ maxHeight: "36rem", overflowY: "auto" }}>
+              {filteredTransactions.length > 0 ? (
+                filteredTransactions
+                  .slice()
+                  .reverse()
+                  .map(tx => (
+                    <div
+                      key={tx._id}
+                      className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      {tx.type === "credit" ? "+ " : "– "}
-                      ₹{(tx.amount || 0).toLocaleString("en-IN")}
-                    </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center">
+                          <div className={`w-2 h-2 rounded-full mr-3 ${
+                            tx.type === "credit" ? "bg-green-500" : "bg-red-500"
+                          }`}></div>
+                          <div>
+                            <p className="font-medium text-gray-900 truncate">{tx.description}</p>
+                            <p className="text-sm text-gray-500">
+                              {new Date(tx.date).toLocaleDateString("en-GB")}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center ml-4">
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          tx.type === "credit" 
+                            ? "bg-green-100 text-green-800" 
+                            : "bg-red-100 text-red-800"
+                        }`}>
+                          {tx.type.toUpperCase()}
+                        </span>
+                        <span className={`ml-3 font-semibold ${
+                          tx.type === "credit" ? "text-green-600" : "text-red-600"
+                        }`}>
+                          {tx.type === "credit" ? "+ " : "– "}
+                          ₹{(tx.amount || 0).toLocaleString("en-IN")}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                   </div>
-                ))
-            ) : (
-              <p className="text-gray-500 text-center py-10">No transactions match your search.</p>
-            )}
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions found</h3>
+                  <p className="text-gray-500">Try adjusting your search criteria or select a different time period.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
