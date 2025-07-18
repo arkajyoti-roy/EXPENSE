@@ -84,7 +84,7 @@ const RecurringRules = () => {
           <h2 className="text-xl font-semibold text-gray-900">Recurring Rules</h2>
           <button
             onClick={openModalToCreate}
-            className="flex items-center gap-1 text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 text-sm rounded"
+            className="flex items-center gap-1 cursor-pointer text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 text-sm rounded"
           >
             <Plus size={14} />
             Add Rule
@@ -108,14 +108,14 @@ const RecurringRules = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openModalToEdit(rule)}
-                          className="text-blue-500 hover:text-blue-700 p-1"
+                          className="text-blue-500 cursor-pointer hover:text-blue-700 p-1"
                           title="Edit recurring rule"
                         >
                           <Edit size={16} />
                         </button>
                         <button
                           onClick={() => deleteRecurringRule(rule._id)}
-                          className={`text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors ${
+                          className={`text-red-500 cursor-pointer hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors ${
                             operationLoading.deleteRecurring ? "opacity-50 pointer-events-none" : ""
                           }`}
                           title="Delete recurring rule"

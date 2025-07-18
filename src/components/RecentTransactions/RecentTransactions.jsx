@@ -98,7 +98,7 @@ const RecentTransactions = () => {
                     <div className="flex gap-1">
                       <button
                         onClick={() => openEditModal(transaction)}
-                        className="text-blue-500 hover:text-blue-700 p-1"
+                        className="text-blue-500 cursor-pointer hover:text-blue-700 p-1"
                         title="Edit transaction"
                       >
                         {/* Edit icon */}
@@ -112,7 +112,7 @@ const RecentTransactions = () => {
 
                       <button
                         onClick={() => deleteTransaction(transaction._id)}
-                        className={`text-red-500 hover:text-red-700 p-1 ${
+                        className={`text-red-500 cursor-pointer hover:text-red-700 p-1 ${
                           operationLoading.deleteTransaction ? "opacity-50 pointer-events-none" : ""
                         }`}
                         title="Delete transaction"
