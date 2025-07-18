@@ -31,8 +31,8 @@ const RecentTransactions = () => {
     if (!token) return;
 
     fetchData();
-    const intervalId = setInterval(fetchData, 1700);
-    return () => clearInterval(intervalId);
+    // const intervalId = setInterval(fetchData, 1700);
+    // return () => clearInterval(intervalId);
   }, [token]);
 
   const deleteTransaction = async (id) => {
@@ -48,7 +48,7 @@ const RecentTransactions = () => {
         console.error("Error deleting transaction:", error);
         toast.error("Failed to delete transaction. Please try again.");
       } finally {
-        setOperationLoadingState("deleteTransaction", false);
+        // setOperationLoadingState("deleteTransaction", false);
       }
     }
   };

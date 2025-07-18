@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import BASE_URL from "../../services/url.js"; 
-
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const Login = () => {
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-
+      toast.success(`Login successful: ${user.name}`);
       console.log("Login successful:", user.name);
       navigate("/home");
     } catch (error) {

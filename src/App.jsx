@@ -11,6 +11,7 @@ import LandingPage from "./LandingPage.jsx";
 import AllComp from "./AllComp.jsx";
 import ExpenseTrackerLoader from "./ExpenseTrackerLoader.jsx";
 import { useState, useEffect } from "react";
+  import { ToastContainer } from 'react-toastify';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -86,6 +87,7 @@ function App() {
           />
         </Routes>
       </Router>
+           <ToastContainer />
 
       <footer className="text-center text-gray-500 text-xs p-4 -mt-12">
         &copy; {new Date().getFullYear()} Expense Tracker. All rights reserved.

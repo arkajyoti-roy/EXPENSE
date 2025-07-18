@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import {toast} from "react-toastify";
 const Navbar = () => {
   const [userName, setUserName] = useState("");
   const [token, setToken] = useState("");
@@ -15,6 +15,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+     toast.success("LogOut successful!");
     window.location.href = "/login";
   };
 
