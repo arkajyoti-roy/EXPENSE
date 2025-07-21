@@ -65,7 +65,7 @@ const BudgetOverview = () => {
 
     const intervalId = setInterval(() => {
       refreshAll();
-    }, 2200); // 2.2 seconds
+    }, 3500); // 3.5 seconds
 
     return () => clearInterval(intervalId);
   }, [token]);

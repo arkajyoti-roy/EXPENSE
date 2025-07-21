@@ -48,7 +48,7 @@ const OverviewCards = () => {
 
     const intervalId = setInterval(() => {
       fetchTransactionSummary();
-    }, 1700); // every 1.7 sec
+    }, 3500); // every 3.5 sec
 
     return () => clearInterval(intervalId); // cleanup
   }, [token]);
