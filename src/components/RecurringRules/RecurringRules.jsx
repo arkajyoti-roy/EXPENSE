@@ -39,8 +39,8 @@ const RecurringRules = () => {
     if (!token) return;
 
     fetchRecurringRules(); // Initial fetch
-    const interval = setInterval(fetchRecurringRules, 1700); // Poll every 1.7s
-    return () => clearInterval(interval);
+    // const interval = setInterval(fetchRecurringRules, 1700); // Poll every 1.7s
+    // return () => clearInterval(interval);
   }, [token]);
 
   const deleteRecurringRule = async (id) => {
